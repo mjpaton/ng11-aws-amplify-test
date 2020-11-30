@@ -1,2 +1,7 @@
 <h3>Dashboard Component</h3>
-<p>You should be redirected here once you log in!</p>
+<p>
+    You should only be at this page if you are logged in! 
+    Click <a class="nav-link" (click)="signOut()">here</a> to <a class="nav-link" (click)="signOut()">Sign Out</a>
+</p>
+<p>{{ currentDate | date:'dd/MM/yyyy HH:mm:ss'}}</p>
+<p></p>

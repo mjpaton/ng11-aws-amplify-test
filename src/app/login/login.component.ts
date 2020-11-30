@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
+import { CognitoUser } from '@aws-amplify/auth';
 
 @Component({
   selector: 'app-login',
@@ -10,8 +12,8 @@ import { Router } from '@angular/router';
 export class LoginComponent {
 
   signinForm: FormGroup = new FormGroup({
-    email: new FormControl('',[ Validators.email, Validators.required ]),
-    password: new FormControl('', [ Validators.required, Validators.min(6) ])
+    email: new FormControl('', [Validators.email, Validators.required]),
+    password: new FormControl('', [Validators.required, Validators.min(6)])
   });
 
   hide = true;
@@ -20,7 +22,7 @@ export class LoginComponent {
   get emailInput() { return this.signinForm.get('email'); }
   get passwordInput() { return this.signinForm.get('password'); }
 
-  constructor(private _router: Router ) { }
+  constructor(public auth: AuthService, private _router: Router) { }
 
   getEmailInputError() {
     if (this.emailInput.hasError('email')) {
@@ -39,27 +41,27 @@ export class LoginComponent {
 
   signIn() {
     console.log('signIn called!');
-    console.log('Redirecting you to Dashboard page...');
-    this._router.navigate(['/dashboard']);
-    // this.auth.signIn(this.emailInput.value, this.passwordInput.value)
-    //   .then((user: CognitoUser|any) => {
-    //     // console.log(user);
-    //     this._router.navigate(['/events']);
-    //   })
-    //   .catch((error: any) => {
-    //     console.log(error);
-    //     this.error = error.message;
-    //     switch (error.code) {
-    //       case "UserNotConfirmedException":
-    //         environment.confirm.email = this.emailInput.value;
-    //         environment.confirm.password = this.passwordInput.value;
-    //         this._router.navigate(['auth/confirm']);
-    //         break;
-    //       case "UsernameExistsException":
-    //         this._router.navigate(['auth/signin']);
-    //         break;
-    //     }
-    //   })
+    this.auth.signIn(this.emailInput.value, this.passwordInput.value)
+      .then((user: CognitoUser | any) => {
+        console.log('Outputting user information from login.component.ts');
+        console.log(user);
+        console.log('Redirecting you to Dashboard page...');
+        this._router.navigate(['/dashboard']);
+      })
+      .catch((error: any) => {
+        console.log(error);
+        this.error = error.message;
+        switch (error.code) {
+          case "UserNotConfirmedException":
+            console.log('User has not confirmed error case.');
+            this._router.navigate(['/login']);
+            break;
+          case "UsernameExistsException":
+            console.log('Username already exists error case.');
+            this._router.navigate(['/login']);
+            break;
+        }
+      })
   }
 
 }
