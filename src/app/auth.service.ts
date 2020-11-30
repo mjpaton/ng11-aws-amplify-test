@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import Auth from '@aws-amplify/auth';
+import { Auth } from '@aws-amplify/auth';
 import { Hub } from '@aws-amplify/core';
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { CognitoUser } from 'amazon-cognito-identity-js';
@@ -41,7 +41,7 @@ export class AuthService {
 
   public get userValue(): any {
     return this.userSubject.value;
-}
+  }
 
   signIn(username: string, password: string): Promise<CognitoUser | any> {
     return new Promise((resolve, reject) => {
@@ -51,7 +51,7 @@ export class AuthService {
           // this.loggedInUser = JSON.stringify(user);
           // localStorage.setItem('currentUser', JSON.stringify(user));
           // localStorage.setItem('token', user.signInUserSession.idToken.jwtToken);
-          localStorage.setItem('user', JSON.stringify(user));
+          // localStorage.setItem('user', JSON.stringify(user));
           this.userSubject.next(user);
           resolve(user);
         })
@@ -62,7 +62,7 @@ export class AuthService {
   signOut(): Promise<any> {
     // localStorage.removeItem('currentUser');
     // localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    // localStorage.removeItem('user');
     this.userSubject.next(null);
     return Auth.signOut().then(() => (this.loggedIn = false));
   }
@@ -71,4 +71,5 @@ export class AuthService {
   toUsername(email) {
     return email.replace('@', '-at-');
   }
+
 }

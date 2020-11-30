@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Auth } from '@aws-amplify/auth';
 import { AuthService } from '../auth.service';
 import { CognitoUser } from '@aws-amplify/auth';
 
@@ -9,7 +10,7 @@ import { CognitoUser } from '@aws-amplify/auth';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 
   signinForm: FormGroup = new FormGroup({
     email: new FormControl('', [Validators.email, Validators.required]),
@@ -23,6 +24,16 @@ export class LoginComponent {
   get passwordInput() { return this.signinForm.get('password'); }
 
   constructor(public auth: AuthService, private _router: Router) { }
+
+  ngOnInit(): void {
+
+    Auth.currentAuthenticatedUser()
+      .then(user => {
+        console.log('Outputting currentAuthenticatedUser results:');
+        console.log(user);
+      })
+      .catch(() => console.log("No user signed in?"));
+  }
 
   getEmailInputError() {
     if (this.emailInput.hasError('email')) {
@@ -43,8 +54,8 @@ export class LoginComponent {
     console.log('signIn called!');
     this.auth.signIn(this.emailInput.value, this.passwordInput.value)
       .then((user: CognitoUser | any) => {
-        console.log('Outputting user information from login.component.ts');
-        console.log(user);
+        // console.log('Outputting user information from login.component.ts');
+        // console.log(user);
         console.log('Redirecting you to Dashboard page...');
         this._router.navigate(['/dashboard']);
       })

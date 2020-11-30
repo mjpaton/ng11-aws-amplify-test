@@ -5,7 +5,7 @@ import {
   RouterStateSnapshot,
   Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import Auth from '@aws-amplify/auth';
+import { Auth } from '@aws-amplify/auth';
 
 @Injectable({
   providedIn: 'root'
