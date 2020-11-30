@@ -26,13 +26,9 @@ export class LoginComponent implements OnInit {
   constructor(public auth: AuthService, private _router: Router) { }
 
   ngOnInit(): void {
-
-    Auth.currentAuthenticatedUser()
-      .then(user => {
-        console.log('Outputting currentAuthenticatedUser results:');
-        console.log(user);
-      })
-      .catch(() => console.log("No user signed in?"));
+    Auth.currentSession()
+      .then(data => console.log(data))
+      .catch(err => console.log(err));
   }
 
   getEmailInputError() {
